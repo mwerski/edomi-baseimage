@@ -18,11 +18,13 @@ RUN cd /tmp \
  && make \
  && make install DESTDIR=/tmp/Mosquitto-PHP
 
+RUN yum groupinstall -y 'Development Tools'
+
 RUN cd /tmp \
  && mkdir -p /tmp/Mosquitto-PHP/usr/lib64/mysql/plugin \
  && git clone https://github.com/jonofe/lib_mysqludf_sys \
  && cd lib_mysqludf_sys/ \
- && gcc -DMYSQL_DYNAMIC_PLUGIN -fPIC -Wall -I/usr/include/mysql -I. -shared lib_mysqludf_sys.c -o /tmp/Mosquitto-PHP/usr/lib64/mysql/plugin/lib_mysqludf_sys.so
+ && gcc -march=armv8-a -DMYSQL_DYNAMIC_PLUGIN -fPIC -Wall -I/usr/include/mysql -I/usr/include/mysql/server -I. -shared lib_mysqludf_sys.c -o /tmp/Mosquitto-PHP/usr/lib64/mysql/plugin/lib_mysqludf_sys.so
 
 RUN cd /tmp \
  && git clone https://github.com/mysqludf/lib_mysqludf_log \
