@@ -5,7 +5,7 @@ MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 RUN dnf -y install \
         mosquitto \
         mosquitto-devel \
-        mysql-devel \
+        mariadb-devel \
         which
 
 # For 19001051 (MQTT Publish Server)
@@ -21,7 +21,14 @@ RUN cd /tmp \
  && mkdir -p /tmp/Mosquitto-PHP/usr/lib64/mysql/plugin \
  && git clone https://github.com/jonofe/lib_mysqludf_sys \
  && cd lib_mysqludf_sys/ \
- && gcc -DMYSQL_DYNAMIC_PLUGIN -fPIC -Wall -I/usr/include/mysql -I. -shared lib_mysqludf_sys.c -o /tmp/Mosquitto-PHP/usr/lib64/mysql/plugin/lib_mysqludf_sys.so
+ && gcc -DMYSQL_DYNAMIC_PLUGIN \
+        -fPIC \
+        -Wall \
+        -I/usr/include/mysql/server \
+        -I/usr/include/mysql/server/private \
+        -I. \
+        -shared lib_mysqludf_sys.c \
+        -o /tmp/Mosquitto-PHP/usr/lib64/mysql/plugin/lib_mysqludf_sys.so
 
 RUN cd /tmp \
  && git clone https://github.com/mysqludf/lib_mysqludf_log \
@@ -34,14 +41,15 @@ RUN cd /tmp \
 FROM rockylinux/rockylinux:latest
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
-RUN dnf update -y \
- && dnf upgrade -y \
+RUN dnf module enable -y \
+        php:7.4 \
  && dnf install -y \
         epel-release \
- && dnf module enable -y \
-        php:7.4 \
  && dnf update -y \
- && dnf install -y \
+ && dnf upgrade -y \
+ && dnf clean all
+
+RUN dnf install -y \
         ca-certificates \
         chrony \
         dos2unix \
@@ -66,11 +74,10 @@ RUN dnf update -y \
         php-gd \
         php-json \
         php-mbstring \
-        php-mysql \
+        php-mysqlnd \
         php-process \
         php-snmp \
         php-soap \
-        php-ssh2 \
         php-xml \
         php-zip \
         tar \
@@ -141,7 +148,7 @@ RUN cd /etc/ssl/certs \
  && echo "curl.cainfo=/etc/ssl/certs/cacert-Mozilla.pem" >> /etc/php.d/curl.ini
 
 # Edomi
-RUN systemctl enable ntpd \
+RUN systemctl enable chronyd \
  && systemctl enable vsftpd \
  && systemctl enable httpd \
  && systemctl enable mariadb
