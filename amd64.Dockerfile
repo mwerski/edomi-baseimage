@@ -1,12 +1,11 @@
-FROM starwarsfan/edomi-baseimage-builder:amd64-latest as builder
+FROM starwarsfan/edomi-baseimage-builder:amd64-rocky-latest as builder
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
 # Dependencies to build stuff
-RUN yum -y install \
+RUN dnf -y install \
         mosquitto \
         mosquitto-devel \
         mysql-devel \
-        php-devel \
         which
 
 # For 19001051 (MQTT Publish Server)
@@ -32,16 +31,19 @@ RUN cd /tmp \
  && make \
  && make install DESTDIR=/tmp/Mosquitto-PHP
 
-FROM centos:7
+FROM rockylinux/rockylinux:latest
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
-RUN yum update -y \
- && yum upgrade -y \
- && yum install -y \
+RUN dnf update -y \
+ && dnf upgrade -y \
+ && dnf install -y \
         epel-release \
- && yum update -y \
- && yum install -y \
+ && dnf module enable -y \
+        php:7.4 \
+ && dnf update -y \
+ && dnf install -y \
         ca-certificates \
+        chrony \
         dos2unix \
         expect \
         file \
@@ -56,20 +58,9 @@ RUN yum update -y \
         net-snmp-utils \
         net-tools \
         nss \
-        ntp \
         oathtool \
         openssh-server \
         openssl \
-        tar \
-        unzip \
-        vsftpd \
-        wget \
-        yum-utils \
- && yum install -y \
-        http://rpms.remirepo.net/enterprise/remi-release-7.rpm \
- && yum-config-manager \
-        --enable remi-php74 \
- && yum install -y \
         php \
         php-curl \
         php-gd \
@@ -82,7 +73,12 @@ RUN yum update -y \
         php-ssh2 \
         php-xml \
         php-zip \
- && yum clean all \
+        tar \
+        unzip \
+        vsftpd \
+        wget \
+        dnf-utils \
+ && dnf clean all \
  && rm -f /etc/vsftpd/ftpusers \
           /etc/vsftpd/user_list
 
@@ -157,10 +153,3 @@ RUN sed -e "s/listen=.*$/listen=YES/g" \
  && mv /usr/bin/systemctl /usr/bin/systemctl_ \
  && wget https://raw.githubusercontent.com/starwarsfan/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/bin/systemctl \
  && chmod 755 /usr/bin/systemctl
-
-# Remove limitation to only one installed language
-RUN sed -i "s/override_install_langs=.*$/override_install_langs=all/g" /etc/yum.conf \
- && yum update -y \
- && yum reinstall -y \
-        glibc-common \
- && yum clean all

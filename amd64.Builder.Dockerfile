@@ -1,24 +1,23 @@
-FROM centos:7
+FROM rockylinux/rockylinux:latest
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
-RUN yum update -y \
- && yum upgrade -y \
- && yum install -y \
+RUN dnf update -y \
+ && dnf upgrade -y \
+ && dnf module enable -y \
+        php:7.4 \
+ && dnf install -y \
         ca-certificates \
+        chrony \
         epel-release \
         file \
         gcc \
         git \
         make \
         mc \
-        ntp \
         openssh-server \
+        php-devel \
         tar \
         unzip \
         wget \
-        yum-utils \
- && yum install -y \
-        http://rpms.remirepo.net/enterprise/remi-release-7.rpm \
- && yum-config-manager \
-        --enable remi-php74 \
- && yum clean all
+        dnf-utils \
+ && dnf clean all
