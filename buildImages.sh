@@ -94,6 +94,11 @@ while getopts aph? option; do
     esac
 done
 
+info "Disabling buildkit etc. pp."
+export DOCKER_BUILDKIT=0
+export COMPOSE_DOCKER_CLI_BUILD=0
+info " -> Done"
+
 pullRocky
 getDigests
 tagRockyImages
