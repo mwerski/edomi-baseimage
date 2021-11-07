@@ -1,4 +1,4 @@
-FROM rockylinux/rockylinux:latest
+FROM rockylinux/rockylinux:latest-amd64
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
 RUN dnf update -y \

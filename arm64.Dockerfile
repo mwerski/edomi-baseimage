@@ -1,12 +1,11 @@
-FROM starwarsfan/edomi-baseimage-builder:arm64v8-latest as builder
+FROM starwarsfan/edomi-baseimage-builder:latest-arm64 as builder
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
 # Dependencies to build stuff
-RUN yum -y install \
+RUN dnf -y install \
         mosquitto \
         mosquitto-devel \
         mariadb-devel \
-        php-devel \
         which
 
 # For 19001051 (MQTT Publish Server)
@@ -17,8 +16,6 @@ RUN cd /tmp \
  && ./configure \
  && make \
  && make install DESTDIR=/tmp/Mosquitto-PHP
-
-RUN yum groupinstall -y 'Development Tools'
 
 RUN cd /tmp \
  && mkdir -p /tmp/Mosquitto-PHP/usr/lib64/mysql/plugin \
@@ -42,17 +39,20 @@ RUN cd /tmp \
  && make \
  && make install DESTDIR=/tmp/Mosquitto-PHP
 
-FROM arm64v8/centos:8
+FROM rockylinux/rockylinux:latest-arm64
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
 COPY qemu-aarch64-static /usr/bin/
 
-RUN yum update -y \
- && yum upgrade -y \
- && yum install -y \
+RUN dnf module enable -y \
+        php:7.4 \
+ && dnf install -y \
         epel-release \
- && yum update -y \
- && yum install -y \
+ && dnf update -y \
+ && dnf upgrade -y \
+ && dnf clean all
+
+RUN dnf install -y \
         ca-certificates \
         chrony \
         dos2unix \
@@ -73,20 +73,6 @@ RUN yum update -y \
         openssh-server \
         openssl \
         passwd \
-        python3 \
-        tar \
-        unzip \
-        vsftpd \
-        wget \
-        yum-utils \
- && yum clean all \
- && rm -f /etc/vsftpd/ftpusers \
-          /etc/vsftpd/user_list
-
-#RUN yum install -y \
-#        https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-
-RUN yum install -y \
         php \
         php-curl \
         php-gd \
@@ -98,9 +84,15 @@ RUN yum install -y \
         php-soap \
         php-xml \
         php-zip \
- && yum clean all
-# Not found on CentOS 8
-#        php-ssh2 \
+        python2 \
+        tar \
+        unzip \
+        vsftpd \
+        wget \
+        dnf-utils \
+ && dnf clean all \
+ && rm -f /etc/vsftpd/ftpusers \
+          /etc/vsftpd/user_list
 
 # Alexa
 RUN ln -s /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /etc/pki/tls/cacert.pem \
@@ -172,12 +164,4 @@ RUN sed -e "s/listen=.*$/listen=YES/g" \
         -i /etc/vsftpd/vsftpd.conf \
  && mv /usr/bin/systemctl /usr/bin/systemctl_ \
  && wget https://raw.githubusercontent.com/starwarsfan/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/bin/systemctl \
- && chmod 755 /usr/bin/systemctl \
- && ln -s /usr/bin/python3 /usr/bin/python
-
-# Remove limitation to only one installed language
-RUN sed -i "s/override_install_langs=.*$/override_install_langs=all/g" /etc/yum.conf \
- && yum update -y \
- && yum reinstall -y \
-        glibc-common \
- && yum clean all
+ && chmod 755 /usr/bin/systemctl

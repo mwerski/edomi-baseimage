@@ -1,11 +1,13 @@
-FROM arm64v8/centos:8
+FROM rockylinux/rockylinux:latest-arm64
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
 COPY qemu-aarch64-static /usr/bin/
 
-RUN yum update -y \
- && yum upgrade -y \
- && yum install -y \
+RUN dnf update -y \
+ && dnf upgrade -y \
+ && dnf module enable -y \
+        php:7.4 \
+ && dnf install -y \
         ca-certificates \
         chrony \
         epel-release \
@@ -15,12 +17,9 @@ RUN yum update -y \
         make \
         mc \
         openssh-server \
+        php-devel \
         tar \
         unzip \
         wget \
-        yum-utils \
- && yum clean all
-
-#COPY epel.repo /etc/yum.repos.d/
-#COPY php72-testing.repo /etc/yum.repos.d/
-#COPY remi.repo /etc/yum.repos.d/
+        dnf-utils \
+ && dnf clean all

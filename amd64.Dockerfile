@@ -1,4 +1,4 @@
-FROM starwarsfan/edomi-baseimage-builder:amd64-rocky-latest as builder
+FROM starwarsfan/edomi-baseimage-builder:latest-amd64 as builder
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
 # Dependencies to build stuff
@@ -38,7 +38,7 @@ RUN cd /tmp \
  && make \
  && make install DESTDIR=/tmp/Mosquitto-PHP
 
-FROM rockylinux/rockylinux:latest
+FROM rockylinux/rockylinux:latest-amd64
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
 RUN dnf module enable -y \
@@ -69,6 +69,7 @@ RUN dnf install -y \
         oathtool \
         openssh-server \
         openssl \
+        passwd \
         php \
         php-curl \
         php-gd \
@@ -80,6 +81,7 @@ RUN dnf install -y \
         php-soap \
         php-xml \
         php-zip \
+        python2 \
         tar \
         unzip \
         vsftpd \
