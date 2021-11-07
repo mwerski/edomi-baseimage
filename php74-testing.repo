@@ -1,5 +1,0 @@
-[php74-testing]
-name=Remi php74 rebuild for armhfp
-baseurl=https://armv7.dev.centos.org/repodir/community-php74-testing/
-enabled=1
-gpgcheck=0
