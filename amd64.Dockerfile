@@ -18,7 +18,7 @@ RUN cd /tmp \
  && make install DESTDIR=/tmp/Mosquitto-PHP
 
 RUN cd /tmp \
- && mkdir -p /tmp/Mosquitto-PHP/usr/lib64/mysql/plugin \
+ && mkdir -p /tmp/Mosquitto-PHP/usr/lib64/mariadb/plugin \
  && git clone https://github.com/jonofe/lib_mysqludf_sys \
  && cd lib_mysqludf_sys/ \
  && gcc -DMYSQL_DYNAMIC_PLUGIN \
@@ -28,7 +28,7 @@ RUN cd /tmp \
         -I/usr/include/mysql/server/private \
         -I. \
         -shared lib_mysqludf_sys.c \
-        -o /tmp/Mosquitto-PHP/usr/lib64/mysql/plugin/lib_mysqludf_sys.so
+        -o /tmp/Mosquitto-PHP/usr/lib64/mariadb/plugin/lib_mysqludf_sys.so
 
 RUN cd /tmp \
  && git clone https://github.com/mysqludf/lib_mysqludf_log \
@@ -100,7 +100,7 @@ RUN ln -s /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /etc/pki/tls/cacert.
 
 # Mosquitto-LBS
 COPY --from=builder /tmp/Mosquitto-PHP/modules /usr/lib64/php/modules/
-COPY --from=builder /tmp/Mosquitto-PHP/usr/lib64/mysql /usr/lib64/mysql/
+COPY --from=builder /tmp/Mosquitto-PHP/usr/lib64/mariadb /usr/lib64/mariadb/
 COPY --from=builder /tmp/lib_mysqludf_log/installdb.sql /root/
 RUN echo 'extension=mosquitto.so' > /etc/php.d/50-mosquitto.ini
 
