@@ -63,6 +63,7 @@ RUN dnf install -y \
         mosquitto \
         mosquitto-devel \
         nano \
+        nginx \
         net-snmp-utils \
         net-tools \
         nss \
@@ -154,6 +155,11 @@ RUN systemctl enable chronyd \
  && systemctl enable vsftpd \
  && systemctl enable httpd \
  && systemctl enable mariadb
+
+# Nginx as the main entry without dedicated websocket handling
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+ && ln -sf /dev/stderr /var/log/nginx/error.log \
+ && systemctl enable nginx
 
 RUN sed -e "s/listen=.*$/listen=YES/g" \
         -e "s/listen_ipv6=.*$/listen_ipv6=NO/g" \
