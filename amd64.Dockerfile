@@ -38,7 +38,7 @@ RUN cd /tmp \
  && make \
  && make install DESTDIR=/tmp/Mosquitto-PHP
 
-FROM rockylinux/rockylinux:latest-amd64
+FROM rockylinux:latest-amd64
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
 RUN dnf module enable -y \

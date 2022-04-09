@@ -40,7 +40,7 @@ pullRocky() {
 
 getDigests() {
     info "Determining amd64 and arm64 image digests"
-    docker manifest inspect rockylinux/rockylinux:latest > /tmp/rockyLinuxManifest.json
+    docker manifest inspect ${ROCKYLINUX_VERSION} > /tmp/rockyLinuxManifest.json
     DIGEST_AMD64=$(jq -j '.manifests[] | select(.platform.architecture == "amd64") | .digest' /tmp/rockyLinuxManifest.json)
     DIGEST_ARM64=$(jq -j '.manifests[] | select(.platform.architecture == "arm64") | .digest' /tmp/rockyLinuxManifest.json)
     info " -> amd64: ${DIGEST_AMD64}"
@@ -81,7 +81,7 @@ buildBaseimage() {
 PUBLISH_IMAGE=false
 BUILD_ARM_IMAGES=false
 PULL_ROCKYLINUX_IMAGE=true
-ROCKYLINUX_VERSION=rockylinux/rockylinux:latest
+ROCKYLINUX_VERSION=rockylinux:latest
 DIGEST_AMD64=''
 DIGEST_ARM64=''
 

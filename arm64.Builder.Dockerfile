@@ -1,4 +1,4 @@
-FROM rockylinux/rockylinux:latest-arm64
+FROM rockylinux:latest-arm64
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
 COPY qemu-aarch64-static /usr/bin/
