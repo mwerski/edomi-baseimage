@@ -127,11 +127,11 @@ RUN cd /usr/local/edomi/main/include/php \
  && chmod 777 -R .
 
 # MikroTik RouterOS API 19001059
-#RUN cd /usr/local/edomi/main/include/php \
-# && git clone https://github.com/jonofe/Net_RouterOS \
-# && cd Net_RouterOS \
-# && composer install \
-# && chmod 777 -R .
+RUN cd /usr/local/edomi/main/include/php \
+ && git clone https://github.com/jonofe/Net_RouterOS \
+ && cd Net_RouterOS \
+ && composer install \
+ && chmod 777 -R .
 
 # Philips HUE Bridge 19000195
 # As long as https://github.com/sqmk/Phue/pull/143 is not merged, fix phpunit via sed
