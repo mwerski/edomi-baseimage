@@ -169,6 +169,9 @@ RUN sed -e "s/listen=.*$/listen=YES/g" \
         -e "s/listen_ipv6=.*$/listen_ipv6=NO/g" \
         -e "s/userlist_enable=.*/userlist_enable=NO/g" \
         -i /etc/vsftpd/vsftpd.conf \
+ && sed -e "/listen.mode/a listen.owner = apache\nlisten.group = apache\nlisten.mode = 0660" \
+        -e "s/^listen.acl_users/;listen.acl_users/g" \
+        -i /etc/php-fpm.d/www.conf \
  && mv /usr/bin/systemctl /usr/bin/systemctl_ \
  && wget https://raw.githubusercontent.com/starwarsfan/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/bin/systemctl \
  && chmod 755 /usr/bin/systemctl
