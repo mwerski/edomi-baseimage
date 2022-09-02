@@ -39,7 +39,7 @@ RUN cd /tmp \
  && make \
  && make install DESTDIR=/tmp/Mosquitto-PHP
 
-FROM rockylinux:latest-arm64
+FROM rockylinux:8-arm64
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
 COPY qemu-aarch64-static /usr/bin/
