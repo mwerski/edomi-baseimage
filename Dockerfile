@@ -1,12 +1,6 @@
-FROM starwarsfan/edomi-baseimage-builder:latest-amd64 as builder
+FROM starwarsfan/edomi-baseimage-builder:latest-buildx as builder
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
-
-# Dependencies to build stuff
-RUN dnf -y install \
-        mosquitto \
-        mosquitto-devel \
-        mariadb-devel \
-        which
+ARG TARGETARCH
 
 # For 19001051 (MQTT Publish Server)
 RUN cd /tmp \
@@ -17,18 +11,32 @@ RUN cd /tmp \
  && make \
  && make install DESTDIR=/tmp/Mosquitto-PHP
 
-RUN cd /tmp \
- && mkdir -p /tmp/Mosquitto-PHP/usr/lib64/mariadb/plugin \
- && git clone https://github.com/jonofe/lib_mysqludf_sys \
- && cd lib_mysqludf_sys/ \
- && gcc -DMYSQL_DYNAMIC_PLUGIN \
-        -fPIC \
-        -Wall \
-        -I/usr/include/mysql/server \
-        -I/usr/include/mysql/server/private \
-        -I. \
-        -shared lib_mysqludf_sys.c \
-        -o /tmp/Mosquitto-PHP/usr/lib64/mariadb/plugin/lib_mysqludf_sys.so
+RUN <<EOT bash
+    cd /tmp
+    mkdir -p /tmp/Mosquitto-PHP/usr/lib64/mariadb/plugin
+    git clone https://github.com/jonofe/lib_mysqludf_sys
+    cd lib_mysqludf_sys/
+    if [ "amd64" = "$TARGETARCH" ]; then
+        gcc -DMYSQL_DYNAMIC_PLUGIN \
+            -fPIC \
+            -Wall \
+            -I/usr/include/mysql/server \
+            -I/usr/include/mysql/server/private \
+            -I. \
+            -shared lib_mysqludf_sys.c \
+            -o /tmp/Mosquitto-PHP/usr/lib64/mariadb/plugin/lib_mysqludf_sys.so
+    else
+        gcc -march=armv8-a \
+            -DMYSQL_DYNAMIC_PLUGIN \
+            -fPIC \
+            -Wall \
+            -I/usr/include/mysql/server \
+            -I/usr/include/mysql/server/private \
+            -I. \
+            -shared lib_mysqludf_sys.c \
+            -o /tmp/Mosquitto-PHP/usr/lib64/mariadb/plugin/lib_mysqludf_sys.so
+    fi
+EOT
 
 RUN cd /tmp \
  && git clone https://github.com/mysqludf/lib_mysqludf_log \
@@ -38,7 +46,7 @@ RUN cd /tmp \
  && make \
  && make install DESTDIR=/tmp/Mosquitto-PHP
 
-FROM rockylinux:8-amd64
+FROM rockylinux:8
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
 RUN dnf module enable -y \

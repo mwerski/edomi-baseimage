@@ -1,4 +1,4 @@
-FROM rockylinux:8-amd64
+FROM rockylinux:8
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 
 RUN dnf update -y \
@@ -8,16 +8,22 @@ RUN dnf update -y \
  && dnf install -y \
         ca-certificates \
         chrony \
+        dnf-utils \
         epel-release \
         file \
         gcc \
         git \
         make \
+        mariadb-devel \
         mc \
         openssh-server \
         php-devel \
         tar \
         unzip \
         wget \
-        dnf-utils \
+        which \
+ && dnf update -y \
+ && dnf install -y \
+        mosquitto \
+        mosquitto-devel \
  && dnf clean all
