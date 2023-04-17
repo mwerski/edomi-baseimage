@@ -154,6 +154,12 @@ RUN cd /usr/local/edomi/main/include/php \
  && composer require phpmailer/phpmailer \
  && chmod 777 -R .
 
+# Influx Data Archives 19002576
+RUN mkdir -p /usr/local/edomi/www/admin/include/php/influx-client \
+ && cd /usr/local/edomi/www/admin/include/php/influx-client \
+ && composer require influxdata/influxdb-client-php \
+ && chmod 777 -R .
+
 # Alexa Control 19000809
 RUN cd /etc/ssl/certs \
  && wget https://curl.haxx.se/ca/cacert.pem -O /etc/ssl/certs/cacert-Mozilla.pem \
