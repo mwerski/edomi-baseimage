@@ -1,4 +1,5 @@
-FROM starwarsfan/edomi-baseimage-builder:latest-buildx as builder
+ARG IMAGE_VERSION=latest
+FROM starwarsfan/edomi-baseimage-builder:${IMAGE_VERSION} as builder
 MAINTAINER Yves Schumann <y.schumann@yetnet.ch>
 ARG TARGETARCH
 

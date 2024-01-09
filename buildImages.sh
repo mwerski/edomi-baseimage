@@ -22,9 +22,11 @@ helpMe() {
     Usage:
     ${0} [options]
     Optional parameters:
-    -a  Also build ARM images beside AMD64
-    -p  Push image to DockerHub
-    -h  Show this help
+    -a .. Also build ARM images beside AMD64
+    -i <version>
+       .. Version to tag the image with
+    -p .. Push image to DockerHub
+    -h .. Show this help
     "
 }
 
@@ -32,10 +34,12 @@ helpMe() {
 PUSH_IMAGE=''
 BUILD_ARM_IMAGES=false
 PLATFORM='linux/amd64'
+IMAGE_VERSION=latest
 
-while getopts aph? option; do
+while getopts ai:ph? option; do
     case ${option} in
         a) BUILD_ARM_IMAGES=true;;
+        i) IMAGE_VERSION="${OPTARG}";;
         p) PUSH_IMAGE=--push;;
         h|?) helpMe && exit 0;;
         *) die 90 "invalid option \"${OPTARG}\"";;
@@ -53,8 +57,8 @@ info "Building Edomi builder image"
 docker buildx \
     build \
     -f Builder_Dockerfile \
-    --platform=${PLATFORM} \
-    --tag=starwarsfan/edomi-baseimage-builder:latest-buildx \
+    "--platform=${PLATFORM}" \
+    "--tag=starwarsfan/edomi-baseimage-builder:${IMAGE_VERSION}" \
     ${PUSH_IMAGE} \
     .
 info " -> Done"
@@ -62,8 +66,9 @@ info " -> Done"
 info "Building Edomi base image"
 docker buildx \
     build \
-    --platform=${PLATFORM} \
-    --tag=starwarsfan/edomi-baseimage:latest-buildx \
+    "--platform=${PLATFORM}" \
+    "--tag=starwarsfan/edomi-baseimage:${IMAGE_VERSION}" \
+    --build-arg "IMAGE_VERSION=${IMAGE_VERSION}" \
     ${PUSH_IMAGE} \
     .
 info " -> Done"
