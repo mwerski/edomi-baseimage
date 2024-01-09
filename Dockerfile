@@ -64,6 +64,7 @@ RUN dnf install -y \
         expect \
         file \
         git \
+        glibc-langpack-de \
         hostname \
         httpd \
         mariadb-server \
