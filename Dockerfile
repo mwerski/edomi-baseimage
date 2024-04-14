@@ -117,7 +117,8 @@ RUN ln -s /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /etc/pki/tls/cacert.
 # Mosquitto-LBS
 COPY --from=builder /tmp/Mosquitto-PHP/modules /usr/lib64/php/modules/
 COPY --from=builder /tmp/Mosquitto-PHP/usr/lib64/mariadb /usr/lib64/mariadb/
-COPY --from=builder /tmp/lib_mysqludf_log/installdb.sql /root/
+COPY --from=builder /tmp/lib_mysqludf_log/installdb.sql /root/installdb_mysqludf_log.sql
+COPY --from=builder /tmp/lib_mysqludf_sys/lib_mysqludf_sys.sql /root/installdb_mysqludf_sys.sql
 RUN echo 'extension=mosquitto.so' > /etc/php.d/50-mosquitto.ini
 
 # Get composer
