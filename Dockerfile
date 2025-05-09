@@ -15,8 +15,8 @@ RUN cd /tmp \
 RUN <<EOT bash
     cd /tmp
     mkdir -p /tmp/Mosquitto-PHP/usr/lib64/mariadb/plugin
-    git clone https://github.com/mwerski/lib_mysqludf_sys
-    cd lib_mysqludf_sys/
+    git clone https://github.com/mwerski/lib_mysqludf_sys_edomi.git
+    cd lib_mysqludf_sys_edomi/
     if [ "amd64" = "$TARGETARCH" ]; then
         gcc -DMYSQL_DYNAMIC_PLUGIN \
             -fPIC \
@@ -118,7 +118,7 @@ RUN ln -s /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /etc/pki/tls/cacert.
 COPY --from=builder /tmp/Mosquitto-PHP/modules /usr/lib64/php/modules/
 COPY --from=builder /tmp/Mosquitto-PHP/usr/lib64/mariadb /usr/lib64/mariadb/
 COPY --from=builder /tmp/lib_mysqludf_log/installdb.sql /root/installdb_mysqludf_log.sql
-COPY --from=builder /tmp/lib_mysqludf_sys/lib_mysqludf_sys.sql /root/installdb_mysqludf_sys.sql
+COPY --from=builder /tmp/lib_mysqludf_sys_edomi/lib_mysqludf_sys.sql /root/installdb_mysqludf_sys.sql
 RUN echo 'extension=mosquitto.so' > /etc/php.d/50-mosquitto.ini
 
 # Get composer
