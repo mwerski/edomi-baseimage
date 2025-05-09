@@ -15,7 +15,7 @@ RUN cd /tmp \
 RUN <<EOT bash
     cd /tmp
     mkdir -p /tmp/Mosquitto-PHP/usr/lib64/mariadb/plugin
-    git clone https://github.com/jonofe/lib_mysqludf_sys
+    git clone https://github.com/mwerski/lib_mysqludf_sys
     cd lib_mysqludf_sys/
     if [ "amd64" = "$TARGETARCH" ]; then
         gcc -DMYSQL_DYNAMIC_PLUGIN \
@@ -140,7 +140,7 @@ RUN cd /usr/local/edomi/main/include/php \
 
 # MikroTik RouterOS API 19001059
 RUN cd /usr/local/edomi/main/include/php \
- && git clone https://github.com/jonofe/Net_RouterOS \
+ && git clone https://github.com/mwerski/Net_RouterOS \
  && cd Net_RouterOS \
  && composer install \
  && chmod 777 -R .
